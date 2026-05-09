@@ -17,7 +17,7 @@ Each GLUE preview folder contains `train_preview.jsonl`, `validation_preview.jso
 - Vision: CIFAR-10, Beans, and `timm/oxford-iiit-pet`.
 - Audio: Minds14-EN, Speech Commands, and SUPERB Emotion Recognition.
 - Reliability/calibration: GLUE tasks with confidence metrics derived from model probabilities.
-- NLG draft results: E2E and WebNLG, with DART used only for smoke tests.
+- NLG: GEM E2E, GEM WebNLG, and GEM DART smoke tests.
 
 ## Recreating Data Locally
 
@@ -30,4 +30,4 @@ python code/reimpl/prepare_glue.py --task_name mrpc --output_dir data/glue_mrpc
 python code/reimpl/prepare_glue.py --task_name cola --output_dir data/glue_cola
 ```
 
-The vision and audio scripts download their datasets from Hugging Face when first run, subject to each dataset's license and access requirements.
+The vision, audio, and NLG scripts download their datasets from Hugging Face when first run, subject to each dataset's license and access requirements.

@@ -1,0 +1,29 @@
+{
+  "abstention_threshold": 0.8,
+  "batch_size": 2,
+  "calibration_bins": 10,
+  "dataset_config": "default",
+  "dataset_name": "GEM/e2e_nlg",
+  "dataset_task": "e2e",
+  "epochs": 2,
+  "eval_examples": 1000,
+  "learning_rate": 5e-05,
+  "lora_alpha": 32.0,
+  "lora_dropout": 0.1,
+  "lora_r": 4,
+  "max_eval_examples": 1000,
+  "max_length": 384,
+  "max_new_tokens": 64,
+  "max_train_examples": 5000,
+  "method": "ft",
+  "model_name": "Qwen/Qwen2.5-0.5B-Instruct",
+  "prompt_variant": "abstain",
+  "prompt_variants": [
+    "strict",
+    "abstain"
+  ],
+  "replaced_modules": [],
+  "seed": 42,
+  "task_name": "nlg_e2e",
+  "train_examples": 5000
+}

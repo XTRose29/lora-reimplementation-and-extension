@@ -1,5 +1,8 @@
 # LoRA Re-implementation and Extension
 
+**Authors:** Rose Tianruo Xu and Weijie Zhou  
+**Contribution statement:** Both authors contributed equally to this project.
+
 ## 1. Introduction
 
 This repository contains a CS 4782 final project re-implementing and extending **LoRA: Low-Rank Adaptation of Large Language Models**.
@@ -10,22 +13,22 @@ LoRA freezes pretrained weights and trains a low-rank update, `Delta W = (alpha 
 
 We reproduce the LoRA paper's core NLU claim: LoRA on RoBERTa-base can match or approach full fine-tuning while training orders of magnitude fewer parameters.
 
-Our main reproduction corresponds to the original paper's full fine-tuning vs adapter vs LoRA comparison on GLUE-style NLU tasks.
+Our main reproduction corresponds to the original paper's full fine-tuning vs adapter vs LoRA comparison on GLUE-style NLU tasks. We then extend the comparison to vision, audio, reliability/calibration, and structured NLG generation.
 
 ## 3. GitHub Contents
 
-- `code/`: NLU, vision, audio, reliability, and task-probed LoRA experiment code.
+- `code/`: NLU, vision, audio, reliability, task-probed LoRA, and NLG experiment code.
 - `data/`: Lightweight dataset previews plus instructions for obtaining full datasets.
 - `results/`: Metrics, logs, predictions, figures, and report-level summary tables.
-- `poster/`: Placeholder directory for the in-class poster PDF.
-- `report/`: Placeholder directory for the final report PDF.
+- `poster/`: Final in-class poster PDF.
+- `report/`: Final two-page project report PDF.
 - `LICENSE`: MIT license for this project repository.
 
 ## 4. Re-implementation Details
 
 NLU experiments compare full fine-tuning, adapters, BitFit, and LoRA on SST-2, MRPC, RTE, and CoLA using RoBERTa-base-style sequence classification.
 
-Extensions evaluate ViT on vision tasks, wav2vec2 on audio tasks, GLUE reliability/calibration metrics, and draft NLG results for E2E/WebNLG.
+Extensions evaluate ViT on vision tasks, wav2vec2 on audio tasks, GLUE reliability/calibration metrics, and Qwen2.5-0.5B-Instruct NLG generation on E2E/WebNLG with DART smoke tests.
 
 ## 5. Reproduction Steps
 
@@ -45,6 +48,7 @@ python code/reimpl/train_my_lora_nlu.py --task_name sst2 --method lora --output_
 python code/vision/train_my_lora_vision.py --task_name cifar10 --method lora --output_dir results/vision/example_cifar10_lora
 python code/audio/train_my_lora_audio.py --task_name speech_commands --method lora --output_dir results/audio/example_speech_commands_lora
 python code/reliability/run_cola_reliability.py --task_name cola --method lora --output_dir results/reliability/example_cola_lora
+bash code/nlg/run_nlg_smoke_matrix.sh
 ```
 
 A CUDA-capable GPU is recommended for full reproduction; CPU runs are suitable only for small smoke tests.
@@ -56,6 +60,8 @@ On NLU, LoRA `r=4` trains 0.74M parameters versus 124.65M for full fine-tuning, 
 Vision LoRA nearly matches FT across CIFAR-10, Beans, and Oxford-IIIT Pet, while audio LoRA is cheaper but weaker than FT across the wav2vec2 tasks.
 
 Reliability experiments show LoRA often lowers ECE and improves selective accuracy, suggesting a calibration benefit even when primary task score drops slightly.
+
+NLG experiments show a scale-dependent pattern: LoRA is more format-stable in small smoke tests, but full fine-tuning becomes stronger on E2E and WebNLG when trained on 5,000 examples.
 
 ## 7. Conclusion
 
@@ -77,3 +83,4 @@ The extensions show that low-rank adaptation works especially well for many NLU 
 This work was completed as a final project for CS 4782.
 
 We thank the course staff and project collaborators for feedback, guidance, and evaluation.
+

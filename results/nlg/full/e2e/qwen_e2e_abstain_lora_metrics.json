@@ -1,0 +1,31 @@
+{
+  "final_id": {
+    "abstained_by_text_rate": 0.0,
+    "abstention_rate": 0.0,
+    "abstention_threshold": 0.8,
+    "accuracy": 0.0,
+    "bleu": 0.36490121362481526,
+    "calibration_accuracy": 0.15409000000000017,
+    "confidence_correct_mean": 0.0,
+    "confidence_wrong_mean": 0.8459099999999998,
+    "coverage": 1.0,
+    "ece": 0.8459099999999998,
+    "exact_match_rate": 0.0,
+    "fact_recall_mean": 0.8171051587301588,
+    "high_conf_wrong_rate": 1.0,
+    "low_conf_correct_rate": 0.0,
+    "mce": 0.8459099999999998,
+    "mean_answer_logprob": -0.8255074169541395,
+    "mean_answer_tokens": 24.7,
+    "mean_confidence": 0.8459099999999998,
+    "mean_response_tokens": 62.98,
+    "mean_sequence_logprob": -0.8255074169541395,
+    "median_confidence": 0.85,
+    "parse_rate": 1.0,
+    "primary_metric": "bleu",
+    "primary_metric_value": 0.36490121362481526,
+    "rouge_l": 0.5332197714258612,
+    "selective_accuracy": 0.0,
+    "selective_rouge_l": 0.5332197714258612
+  }
+}
