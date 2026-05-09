@@ -1,0 +1,8 @@
+accuracy: 0.9369266055045872
+primary_metric: accuracy
+primary_metric_value: 0.9369266055045872
+eval_loss: 0.23781672123420453
+task_name: sst2
+model_name: roberta-base
+method: adapter
+split: validation

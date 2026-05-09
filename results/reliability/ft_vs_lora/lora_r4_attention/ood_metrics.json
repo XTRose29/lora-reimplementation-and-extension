@@ -1,0 +1,9 @@
+{
+  "abstention_rate": 0.2855504587155963,
+  "abstention_threshold": 0.8,
+  "coverage": 0.7144495412844036,
+  "distribution": "ood",
+  "mean_confidence": 0.8541806348385105,
+  "ood_task": "sst2",
+  "split": "validation"
+}

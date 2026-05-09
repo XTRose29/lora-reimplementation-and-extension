@@ -1,0 +1,13 @@
+{
+  "accuracy": 0.9201417279912782,
+  "dataset_name": "timm/oxford-iiit-pet",
+  "eval_loss": 1.5945304025774416,
+  "eval_samples": 3669,
+  "method": "ft",
+  "missing_keys": [],
+  "model_name": "google/vit-base-patch16-224-in21k",
+  "primary_metric": "accuracy",
+  "primary_metric_value": 0.9201417279912782,
+  "task_name": "oxford_iiit_pet",
+  "unexpected_keys": []
+}

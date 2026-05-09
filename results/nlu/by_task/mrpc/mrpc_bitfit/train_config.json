@@ -1,0 +1,36 @@
+{
+  "adapter_dropout": 0.0,
+  "adapter_location": "output",
+  "adapter_size": 16,
+  "batch_size": 16,
+  "device": "cuda",
+  "epochs": 5,
+  "gradient_accumulation_steps": 1,
+  "learning_rate": 0.0001,
+  "lora_alpha": 32.0,
+  "lora_dropout": 0.1,
+  "lora_r": 4,
+  "max_eval_samples": null,
+  "max_length": 128,
+  "max_train_samples": null,
+  "method": "bitfit",
+  "model_name": "roberta-base",
+  "output_dir": "my_NLU/results/by_task/mrpc/mrpc_bitfit",
+  "parameter_count": {
+    "frozen_parameters": 123952896,
+    "total_parameters": 124647170,
+    "trainable_parameters": 694274,
+    "trainable_ratio": 0.005569913861662483
+  },
+  "primary_metric": "f1",
+  "replaced_modules": [],
+  "seed": 42,
+  "target_modules": [
+    "query",
+    "value"
+  ],
+  "task_name": "mrpc",
+  "validation_split": "validation",
+  "warmup_ratio": 0.06,
+  "weight_decay": 0.0
+}

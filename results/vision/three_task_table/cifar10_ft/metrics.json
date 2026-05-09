@@ -1,0 +1,13 @@
+{
+  "accuracy": 0.9865,
+  "dataset_name": "cifar10",
+  "eval_loss": 0.05392606626972556,
+  "eval_samples": 10000,
+  "method": "ft",
+  "missing_keys": [],
+  "model_name": "google/vit-base-patch16-224-in21k",
+  "primary_metric": "accuracy",
+  "primary_metric_value": 0.9865,
+  "task_name": "cifar10",
+  "unexpected_keys": []
+}

@@ -1,0 +1,43 @@
+{
+  "abstention_threshold": 0.8,
+  "attention_targets": [
+    "q_proj",
+    "v_proj"
+  ],
+  "batch_size": 16,
+  "calibration_bins": 15,
+  "device": "cuda",
+  "epochs": 5,
+  "gradient_accumulation_steps": 1,
+  "layer_indices": "all",
+  "learning_rate": null,
+  "lora_alpha": 32.0,
+  "lora_dropout": 0.1,
+  "lora_placement": "attention",
+  "lora_r": 4,
+  "max_eval_samples": null,
+  "max_length": 128,
+  "max_ood_samples": 1000,
+  "max_train_samples": null,
+  "method": "ft",
+  "model_name": "Qwen/Qwen2.5-0.5B-Instruct",
+  "ood_has_compatible_labels": false,
+  "ood_split": "validation",
+  "ood_task": "none",
+  "output_dir": "cola_reliability/results/exp1_reasoning_0p5b_ft_vs_lora/rte_ft",
+  "parameter_count": {
+    "frozen_parameters": 0,
+    "total_parameters": 494034560,
+    "trainable_parameters": 494034560,
+    "trainable_ratio": 1.0
+  },
+  "primary_metric": "accuracy",
+  "replaced_modules": [],
+  "resolved_learning_rate": 2e-05,
+  "seed": 42,
+  "selected_layers": "all",
+  "task_name": "rte",
+  "validation_split": "validation",
+  "warmup_ratio": 0.06,
+  "weight_decay": 0.0
+}

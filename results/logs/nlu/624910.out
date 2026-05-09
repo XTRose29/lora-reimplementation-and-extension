@@ -1,0 +1,35 @@
+Preparing GLUE task rte...
+Prepared GLUE/rte. Metadata: data/glue_rte/metadata.json
+Running FT on rte, output=my_NLU/results/by_task/rte/rte_ft
+Training complete. Best accuracy: 0.7762
+Outputs: my_NLU/results/by_task/rte/rte_ft
+Evaluating FT on rte
+Evaluation complete. accuracy: 0.7762
+Outputs: my_NLU/results/by_task/rte/rte_ft
+Running BitFit on rte, output=my_NLU/results/by_task/rte/rte_bitfit
+Training complete. Best accuracy: 0.6101
+Outputs: my_NLU/results/by_task/rte/rte_bitfit
+Evaluating BitFit on rte
+Evaluation complete. accuracy: 0.6101
+Outputs: my_NLU/results/by_task/rte/rte_bitfit
+Running Adapter0.3M on rte, output=my_NLU/results/by_task/rte/rte_adapter_0p3m
+Training complete. Best accuracy: 0.7004
+Outputs: my_NLU/results/by_task/rte/rte_adapter_0p3m
+Evaluating Adapter0.3M on rte
+Evaluation complete. accuracy: 0.7004
+Outputs: my_NLU/results/by_task/rte/rte_adapter_0p3m
+Running Adapter0.9M on rte, output=my_NLU/results/by_task/rte/rte_adapter_0p9m
+Training complete. Best accuracy: 0.7184
+Outputs: my_NLU/results/by_task/rte/rte_adapter_0p9m
+Evaluating Adapter0.9M on rte
+Evaluation complete. accuracy: 0.7184
+Outputs: my_NLU/results/by_task/rte/rte_adapter_0p9m
+Running LoRA on rte, output=my_NLU/results/by_task/rte/rte_lora
+Training complete. Best accuracy: 0.6931
+Outputs: my_NLU/results/by_task/rte/rte_lora
+Evaluating LoRA on rte
+Evaluation complete. accuracy: 0.6931
+Outputs: my_NLU/results/by_task/rte/rte_lora
+Wrote summary: my_NLU/results/by_task/rte/summary_table.csv
+Done. Results written to my_NLU/results/by_task/rte
+Task table: my_NLU/results/by_task/rte/paper_style_rte_table.md

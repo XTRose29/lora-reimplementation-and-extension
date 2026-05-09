@@ -1,0 +1,3 @@
+experiment,task_name,method,model_name,accuracy,eval_loss,trainable_parameters,# Trainable Parameters,trainable_ratio
+oxford_iiit_pet_ft,oxford_iiit_pet,ft,google/vit-base-patch16-224-in21k,0.9201417279912782,1.5945304025774416,85827109,85.83M,1.0
+oxford_iiit_pet_lora,oxford_iiit_pet,lora,google/vit-base-patch16-224-in21k,0.928045789043336,0.25167645863864735,175909,0.18M,0.0020460586221052704

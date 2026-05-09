@@ -1,0 +1,9 @@
+accuracy: 0.8651960784313726
+f1: 0.9036777583187391
+primary_metric: f1
+primary_metric_value: 0.9036777583187391
+eval_loss: 0.37535379655086076
+task_name: mrpc
+model_name: roberta-base
+method: lora
+split: validation

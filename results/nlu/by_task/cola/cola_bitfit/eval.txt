@@ -1,0 +1,9 @@
+accuracy: 0.8034515819750719
+matthews_correlation: 0.5099888407051765
+primary_metric: matthews_correlation
+primary_metric_value: 0.5099888407051765
+eval_loss: 0.4667884680357846
+task_name: cola
+model_name: roberta-base
+method: bitfit
+split: validation

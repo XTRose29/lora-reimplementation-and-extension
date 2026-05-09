@@ -1,0 +1,207 @@
+\section{Reliability Experiments on GLUE}
+\label{sec:cola-reliability}
+
+We evaluate whether parameter-efficient LoRA tuning preserves task performance while improving the reliability of classifier confidence. The main experiments use \texttt{roberta-base} on four GLUE validation tasks: CoLA, MRPC, RTE, and SST-2. Following the task definitions in the experiment code, the primary metric is Matthews correlation for CoLA, F1 for MRPC, and accuracy for RTE and SST-2. All runs train for 5 epochs with batch size 16, seed 42, maximum sequence length 128, AdamW optimization, linear warmup over 6\% of training steps, and no OOD split in the submitted experiment scripts. Full fine-tuning uses a learning rate of $2\times 10^{-5}$, while LoRA uses $2\times 10^{-4}$. Reliability is measured from the final softmax probabilities using 15-bin expected calibration error (ECE), negative log-likelihood, Brier score, and selective prediction at confidence threshold 0.80. The reported abstention rate is therefore the fraction of validation examples whose maximum softmax confidence is below 0.80, and selective accuracy is accuracy on the remaining covered examples.
+
+LoRA is implemented by replacing selected \texttt{nn.Linear} modules with the local \texttt{MyLoRALinear} wrapper. For the baseline LoRA comparison, rank $r=4$, $\alpha=32$, and dropout 0.1 are applied to attention query/value projections in all transformer layers; only LoRA parameters and the classification head are trainable. This gives 0.74M trainable parameters for RoBERTa, compared with 124.65M trainable parameters for full fine-tuning.
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{llrrrrr}
+\toprule
+Task & Method & Trainable Params & Primary & Acc. & ECE & Sel. Acc. \\
+\midrule
+CoLA & FT & 124.65M & 0.603 & 0.838 & 0.148 & 0.852 \\
+CoLA & LoRA & 0.74M & 0.578 & 0.828 & 0.096 & 0.861 \\
+MRPC & FT & 124.65M & 0.918 & 0.885 & 0.106 & 0.895 \\
+MRPC & LoRA & 0.74M & 0.897 & 0.858 & 0.060 & 0.935 \\
+RTE & FT & 124.65M & 0.776 & 0.776 & 0.191 & 0.790 \\
+RTE & LoRA & 0.74M & 0.708 & 0.708 & 0.112 & 0.818 \\
+SST-2 & FT & 124.65M & 0.939 & 0.939 & 0.060 & 0.939 \\
+SST-2 & LoRA & 0.74M & 0.939 & 0.939 & 0.049 & 0.947 \\
+\bottomrule
+\end{tabular}
+\caption{Full fine-tuning versus attention-only LoRA on RoBERTa-base. Primary is MCC for CoLA, F1 for MRPC, and accuracy for RTE/SST-2. Lower ECE is better; higher selective accuracy is better.}
+\label{tab:ft-vs-lora-reliability}
+\end{table}
+
+Table~\ref{tab:ft-vs-lora-reliability} shows the main trade-off. Attention-only LoRA uses less than 1\% of the trainable parameters of full fine-tuning and substantially improves calibration on every task. ECE drops from 0.148 to 0.096 on CoLA, 0.106 to 0.060 on MRPC, 0.191 to 0.112 on RTE, and 0.060 to 0.049 on SST-2. The cost is a task-dependent reduction in primary performance: small on CoLA and MRPC, larger on RTE, and essentially zero on SST-2. The selective-prediction results suggest that LoRA is less overconfident: it abstains more often, but the examples it keeps are more reliable, giving higher selective accuracy on all four tasks.
+
+We next vary the LoRA capacity and placement. The search covers ranks $r\in\{1,4,8,16\}$ and three insertion patterns: attention only, MLP only, and attention+MLP. Table~\ref{tab:lora-setting-search} reports the best configuration for each task according to its primary metric.
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{llrrrrr}
+\toprule
+Task & Best LoRA Setting & Trainable Params & Primary & Acc. & ECE & Abstain \\
+\midrule
+CoLA & $r=4$, attn+MLP & 1.11M & 0.606 & 0.839 & 0.132 & 0.059 \\
+MRPC & $r=4$, attn+MLP & 1.11M & 0.927 & 0.900 & 0.071 & 0.069 \\
+RTE & $r=8$, attn+MLP & 1.62M & 0.776 & 0.776 & 0.109 & 0.242 \\
+SST-2 & $r=4$, attn+MLP & 1.11M & 0.956 & 0.956 & 0.038 & 0.010 \\
+\bottomrule
+\end{tabular}
+\caption{Best RoBERTa LoRA configuration from the rank and placement sweep. The sweep keeps $\alpha=32$, dropout 0.1, 5 epochs, and the same reliability evaluation protocol.}
+\label{tab:lora-setting-search}
+\end{table}
+
+The sweep shows that adding LoRA adapters to both attention and MLP layers is consistently strongest. It is the best setting for all tasks, with rank 4 sufficient for CoLA, MRPC, and SST-2, and rank 8 best for RTE. These configurations recover or exceed full fine-tuning performance while still training only about 0.9--1.3\% as many parameters as full RoBERTa fine-tuning. In particular, the best LoRA setting slightly exceeds full fine-tuning on CoLA, MRPC, and SST-2, and matches full fine-tuning on RTE. The calibration picture is more nuanced: attention-only LoRA gives the lowest ECE on CoLA and MRPC in some cases, but the best task-performing attention+MLP settings still remain better calibrated than full fine-tuning on MRPC, RTE, and SST-2.
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{llrrrrr}
+\toprule
+Task & Best-ECE LoRA Setting & Trainable Params & Primary & Acc. & ECE & Abstain \\
+\midrule
+CoLA & $r=8$, attention & 0.89M & 0.575 & 0.827 & 0.091 & 0.140 \\
+MRPC & $r=8$, attention & 0.89M & 0.904 & 0.865 & 0.052 & 0.189 \\
+RTE & $r=1$, attention & 0.63M & 0.711 & 0.711 & 0.073 & 0.498 \\
+SST-2 & $r=4$, attn+MLP & 1.11M & 0.956 & 0.956 & 0.038 & 0.010 \\
+\bottomrule
+\end{tabular}
+\caption{Best RoBERTa LoRA configurations when selecting by lowest validation ECE instead of highest task metric.}
+\label{tab:lora-best-ece}
+\end{table}
+
+Table~\ref{tab:lora-best-ece} isolates calibration performance. For CoLA, MRPC, and RTE, the best-ECE setting is attention-only LoRA rather than attention+MLP LoRA. This suggests that adding MLP adapters increases representational capacity and often improves task accuracy, but it can also make the classifier more confident and therefore less well calibrated. The clearest example is RTE: rank-1 attention-only LoRA obtains the lowest ECE, 0.073, but abstains on nearly half of the validation examples and has lower accuracy than the best-primary RTE setting. In contrast, SST-2 is stable across both objectives: $r=4$ attention+MLP LoRA gives both the highest accuracy and the lowest ECE. Overall, the best-ECE results show a useful accuracy--calibration trade-off. If the goal is maximum task score, attention+MLP adapters are preferable; if the goal is calibrated confidence under selective prediction, lower-capacity attention-only adapters can be better, especially on smaller or less stable tasks.
+
+Finally, we repeat the full fine-tuning versus LoRA comparison with \texttt{Qwen/Qwen2.5-0.5B-Instruct} on the completed tasks. The same reliability metrics and LoRA hyperparameters are used, with LoRA applied to the automatically inferred attention projections.
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{llrrrrr}
+\toprule
+Task & Method & Trainable Params & Primary & Acc. & ECE & Sel. Acc. \\
+\midrule
+CoLA & FT & 494.03M & 0.523 & 0.802 & 0.184 & 0.807 \\
+CoLA & LoRA & 0.27M & 0.537 & 0.807 & 0.149 & 0.835 \\
+MRPC & FT & 494.03M & 0.895 & 0.848 & 0.145 & 0.853 \\
+MRPC & LoRA & 0.27M & 0.899 & 0.858 & 0.125 & 0.868 \\
+RTE & FT & 494.03M & 0.776 & 0.776 & 0.212 & 0.789 \\
+RTE & LoRA & 0.27M & 0.755 & 0.755 & 0.184 & 0.798 \\
+\bottomrule
+\end{tabular}
+\caption{Full fine-tuning versus attention-only LoRA on Qwen2.5-0.5B-Instruct for the completed reasoning-model runs.}
+\label{tab:qwen-ft-vs-lora-reliability}
+\end{table}
+
+The Qwen runs reinforce the main conclusion. LoRA trains roughly 0.055\% of the model parameters, improves ECE on every completed task, and improves selective accuracy. On CoLA and MRPC it also slightly improves the primary task metric over full fine-tuning; on RTE, it loses about 2.2 accuracy points while still improving calibration. Overall, these results support the hypothesis that LoRA can act as a useful reliability-preserving adaptation method: it dramatically reduces the number of trainable parameters, often improves calibration, and, when adapters are placed in both attention and MLP layers, can match or exceed full fine-tuning accuracy on most tasks in this experiment.
+
+\subsection{Full Result Tables}
+\label{sec:cola-full-results}
+
+Tables~\ref{tab:exp1-full}, \ref{tab:exp1-reasoning-full}, and \ref{tab:exp2-full} report the complete rows from the three result summaries. These tables use the same abbreviations as above: Primary is the task-specific primary metric, ECE is expected calibration error, NLL is negative log-likelihood, Abstain is the fraction of validation examples below the 0.80 confidence threshold, Coverage is $1-\text{Abstain}$, and Sel. Acc. is selective accuracy on covered examples.
+
+{\scriptsize
+\begin{longtable}{llrlrrrrrrrr}
+\caption{Full Exp. 1 results: RoBERTa-base full fine-tuning versus attention-only LoRA.}
+\label{tab:exp1-full}\\
+\toprule
+Task & Method & Params & Metric & Primary & Acc. & ECE & NLL & Brier & Abstain & Coverage & Sel. Acc. \\
+\midrule
+\endfirsthead
+\toprule
+Task & Method & Params & Metric & Primary & Acc. & ECE & NLL & Brier & Abstain & Coverage & Sel. Acc. \\
+\midrule
+\endhead
+CoLA & FT & 124.65M & matthews\_correlation & 0.603 & 0.838 & 0.148 & 0.847 & 0.300 & 0.031 & 0.969 & 0.852 \\
+CoLA & LoRA & 0.74M & matthews\_correlation & 0.578 & 0.828 & 0.096 & 0.475 & 0.276 & 0.146 & 0.854 & 0.861 \\
+MRPC & FT & 124.65M & f1 & 0.918 & 0.885 & 0.106 & 0.538 & 0.213 & 0.022 & 0.978 & 0.895 \\
+MRPC & LoRA & 0.74M & f1 & 0.897 & 0.858 & 0.060 & 0.343 & 0.197 & 0.174 & 0.826 & 0.935 \\
+RTE & FT & 124.65M & accuracy & 0.776 & 0.776 & 0.191 & 0.886 & 0.404 & 0.036 & 0.964 & 0.790 \\
+RTE & LoRA & 0.74M & accuracy & 0.708 & 0.708 & 0.112 & 0.589 & 0.397 & 0.365 & 0.635 & 0.818 \\
+SST-2 & FT & 124.65M & accuracy & 0.939 & 0.939 & 0.060 & 0.345 & 0.119 & 0.006 & 0.994 & 0.939 \\
+SST-2 & LoRA & 0.74M & accuracy & 0.939 & 0.939 & 0.049 & 0.245 & 0.108 & 0.025 & 0.975 & 0.947 \\
+\bottomrule
+\end{longtable}
+}
+
+{\scriptsize
+\begin{longtable}{llrlrrrrrrrr}
+\caption{Full reasoning-model Exp. 1 results: Qwen2.5-0.5B-Instruct full fine-tuning versus attention-only LoRA.}
+\label{tab:exp1-reasoning-full}\\
+\toprule
+Task & Method & Params & Metric & Primary & Acc. & ECE & NLL & Brier & Abstain & Coverage & Sel. Acc. \\
+\midrule
+\endfirsthead
+\toprule
+Task & Method & Params & Metric & Primary & Acc. & ECE & NLL & Brier & Abstain & Coverage & Sel. Acc. \\
+\midrule
+\endhead
+CoLA & FT & 494.03M & matthews\_correlation & 0.523 & 0.802 & 0.184 & 1.231 & 0.378 & 0.027 & 0.973 & 0.807 \\
+CoLA & LoRA & 0.27M & matthews\_correlation & 0.537 & 0.807 & 0.149 & 0.739 & 0.323 & 0.084 & 0.916 & 0.835 \\
+MRPC & FT & 494.03M & f1 & 0.895 & 0.848 & 0.145 & 1.113 & 0.290 & 0.017 & 0.983 & 0.853 \\
+MRPC & LoRA & 0.27M & f1 & 0.899 & 0.858 & 0.125 & 0.696 & 0.256 & 0.051 & 0.949 & 0.868 \\
+RTE & FT & 494.03M & accuracy & 0.776 & 0.776 & 0.212 & 1.772 & 0.421 & 0.025 & 0.975 & 0.789 \\
+RTE & LoRA & 0.27M & accuracy & 0.755 & 0.755 & 0.184 & 0.951 & 0.398 & 0.141 & 0.859 & 0.798 \\
+\bottomrule
+\end{longtable}
+}
+
+{\scriptsize
+\begin{longtable}{llrlrrrrrrr}
+\caption{Full Exp. 2 results: RoBERTa-base LoRA rank and placement sweep.}
+\label{tab:exp2-full}\\
+\toprule
+Task & Setting & Params & Metric & Primary & Acc. & ECE & NLL & Brier & Abstain & Sel. Acc. \\
+\midrule
+\endfirsthead
+\toprule
+Task & Setting & Params & Metric & Primary & Acc. & ECE & NLL & Brier & Abstain & Sel. Acc. \\
+\midrule
+\endhead
+CoLA & $r=16$, attention & 1.18M & matthews\_correlation & 0.575 & 0.827 & 0.092 & 0.473 & 0.270 & 0.150 & 0.868 \\
+CoLA & $r=16$, attention+mlp & 2.66M & matthews\_correlation & 0.586 & 0.831 & 0.128 & 0.579 & 0.283 & 0.074 & 0.860 \\
+CoLA & $r=16$, mlp & 2.07M & matthews\_correlation & 0.581 & 0.829 & 0.127 & 0.563 & 0.290 & 0.084 & 0.855 \\
+CoLA & $r=1$, attention & 0.63M & matthews\_correlation & 0.562 & 0.823 & 0.101 & 0.487 & 0.283 & 0.172 & 0.865 \\
+CoLA & $r=1$, attention+mlp & 0.72M & matthews\_correlation & 0.585 & 0.831 & 0.123 & 0.572 & 0.289 & 0.084 & 0.849 \\
+CoLA & $r=1$, mlp & 0.68M & matthews\_correlation & 0.568 & 0.825 & 0.120 & 0.526 & 0.290 & 0.092 & 0.851 \\
+CoLA & $r=4$, attention & 0.74M & matthews\_correlation & 0.591 & 0.833 & 0.092 & 0.467 & 0.265 & 0.157 & 0.873 \\
+CoLA & $r=4$, attention+mlp & 1.11M & matthews\_correlation & 0.606 & 0.839 & 0.132 & 0.633 & 0.285 & 0.059 & 0.854 \\
+CoLA & $r=4$, mlp & 0.96M & matthews\_correlation & 0.591 & 0.833 & 0.113 & 0.513 & 0.280 & 0.085 & 0.856 \\
+CoLA & $r=8$, attention & 0.89M & matthews\_correlation & 0.575 & 0.827 & 0.091 & 0.470 & 0.271 & 0.140 & 0.864 \\
+CoLA & $r=8$, attention+mlp & 1.62M & matthews\_correlation & 0.593 & 0.834 & 0.121 & 0.559 & 0.276 & 0.085 & 0.866 \\
+CoLA & $r=8$, mlp & 1.33M & matthews\_correlation & 0.568 & 0.825 & 0.125 & 0.529 & 0.285 & 0.088 & 0.860 \\
+MRPC & $r=16$, attention & 1.18M & f1 & 0.909 & 0.875 & 0.055 & 0.334 & 0.185 & 0.172 & 0.932 \\
+MRPC & $r=16$, attention+mlp & 2.66M & f1 & 0.923 & 0.895 & 0.075 & 0.365 & 0.178 & 0.074 & 0.913 \\
+MRPC & $r=16$, mlp & 2.07M & f1 & 0.916 & 0.887 & 0.088 & 0.370 & 0.195 & 0.047 & 0.902 \\
+MRPC & $r=1$, attention & 0.63M & f1 & 0.898 & 0.858 & 0.054 & 0.355 & 0.211 & 0.194 & 0.918 \\
+MRPC & $r=1$, attention+mlp & 0.72M & f1 & 0.913 & 0.880 & 0.080 & 0.368 & 0.197 & 0.105 & 0.912 \\
+MRPC & $r=1$, mlp & 0.68M & f1 & 0.901 & 0.863 & 0.099 & 0.444 & 0.225 & 0.088 & 0.890 \\
+MRPC & $r=4$, attention & 0.74M & f1 & 0.902 & 0.865 & 0.066 & 0.337 & 0.194 & 0.135 & 0.924 \\
+MRPC & $r=4$, attention+mlp & 1.11M & f1 & 0.927 & 0.900 & 0.071 & 0.356 & 0.176 & 0.069 & 0.913 \\
+MRPC & $r=4$, mlp & 0.96M & f1 & 0.916 & 0.885 & 0.060 & 0.324 & 0.179 & 0.113 & 0.925 \\
+MRPC & $r=8$, attention & 0.89M & f1 & 0.904 & 0.865 & 0.052 & 0.335 & 0.195 & 0.189 & 0.924 \\
+MRPC & $r=8$, attention+mlp & 1.62M & f1 & 0.922 & 0.892 & 0.082 & 0.401 & 0.190 & 0.047 & 0.902 \\
+MRPC & $r=8$, mlp & 1.33M & f1 & 0.917 & 0.885 & 0.083 & 0.383 & 0.187 & 0.056 & 0.914 \\
+RTE & $r=16$, attention & 1.18M & accuracy & 0.711 & 0.711 & 0.119 & 0.579 & 0.391 & 0.361 & 0.814 \\
+RTE & $r=16$, attention+mlp & 2.66M & accuracy & 0.736 & 0.736 & 0.157 & 0.631 & 0.389 & 0.213 & 0.812 \\
+RTE & $r=16$, mlp & 2.07M & accuracy & 0.762 & 0.762 & 0.114 & 0.560 & 0.353 & 0.264 & 0.828 \\
+RTE & $r=1$, attention & 0.63M & accuracy & 0.711 & 0.711 & 0.073 & 0.561 & 0.382 & 0.498 & 0.827 \\
+RTE & $r=1$, attention+mlp & 0.72M & accuracy & 0.747 & 0.747 & 0.084 & 0.507 & 0.336 & 0.329 & 0.849 \\
+RTE & $r=1$, mlp & 0.68M & accuracy & 0.700 & 0.700 & 0.146 & 0.619 & 0.418 & 0.329 & 0.785 \\
+RTE & $r=4$, attention & 0.74M & accuracy & 0.693 & 0.693 & 0.126 & 0.601 & 0.407 & 0.368 & 0.800 \\
+RTE & $r=4$, attention+mlp & 1.11M & accuracy & 0.744 & 0.744 & 0.139 & 0.615 & 0.377 & 0.227 & 0.808 \\
+RTE & $r=4$, mlp & 0.96M & accuracy & 0.733 & 0.733 & 0.133 & 0.578 & 0.363 & 0.267 & 0.833 \\
+RTE & $r=8$, attention & 0.89M & accuracy & 0.711 & 0.711 & 0.103 & 0.585 & 0.394 & 0.379 & 0.820 \\
+RTE & $r=8$, attention+mlp & 1.62M & accuracy & 0.776 & 0.776 & 0.109 & 0.527 & 0.324 & 0.242 & 0.852 \\
+RTE & $r=8$, mlp & 1.33M & accuracy & 0.762 & 0.762 & 0.096 & 0.521 & 0.340 & 0.267 & 0.833 \\
+SST-2 & $r=16$, attention & 1.18M & accuracy & 0.942 & 0.942 & 0.048 & 0.240 & 0.105 & 0.017 & 0.947 \\
+SST-2 & $r=16$, attention+mlp & 2.66M & accuracy & 0.948 & 0.948 & 0.046 & 0.233 & 0.096 & 0.013 & 0.952 \\
+SST-2 & $r=16$, mlp & 2.07M & accuracy & 0.946 & 0.946 & 0.044 & 0.230 & 0.098 & 0.010 & 0.950 \\
+SST-2 & $r=1$, attention & 0.63M & accuracy & 0.939 & 0.939 & 0.042 & 0.223 & 0.104 & 0.034 & 0.952 \\
+SST-2 & $r=1$, attention+mlp & 0.72M & accuracy & 0.939 & 0.939 & 0.051 & 0.262 & 0.109 & 0.016 & 0.946 \\
+SST-2 & $r=1$, mlp & 0.68M & accuracy & 0.944 & 0.944 & 0.049 & 0.246 & 0.103 & 0.018 & 0.950 \\
+SST-2 & $r=4$, attention & 0.74M & accuracy & 0.939 & 0.939 & 0.051 & 0.251 & 0.108 & 0.019 & 0.947 \\
+SST-2 & $r=4$, attention+mlp & 1.11M & accuracy & 0.956 & 0.956 & 0.038 & 0.221 & 0.081 & 0.010 & 0.962 \\
+SST-2 & $r=4$, mlp & 0.96M & accuracy & 0.945 & 0.945 & 0.049 & 0.244 & 0.103 & 0.009 & 0.948 \\
+SST-2 & $r=8$, attention & 0.89M & accuracy & 0.942 & 0.942 & 0.049 & 0.245 & 0.108 & 0.016 & 0.945 \\
+SST-2 & $r=8$, attention+mlp & 1.62M & accuracy & 0.943 & 0.943 & 0.050 & 0.248 & 0.102 & 0.016 & 0.950 \\
+SST-2 & $r=8$, mlp & 1.33M & accuracy & 0.937 & 0.937 & 0.051 & 0.251 & 0.109 & 0.021 & 0.948 \\
+\bottomrule
+\end{longtable}
+}

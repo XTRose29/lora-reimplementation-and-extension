@@ -1,0 +1,19 @@
+Reasoning 0.5B Exp1: cola full fine-tuning
+Done: cola_reliability/results/exp1_reasoning_0p5b_ft_vs_lora/cola_ft
+ID matthews_correlation=0.5231 ECE=0.1836 abstain=0.0268
+Reasoning 0.5B Exp1: cola LoRA
+Done: cola_reliability/results/exp1_reasoning_0p5b_ft_vs_lora/cola_lora_r4_attention
+ID matthews_correlation=0.5369 ECE=0.1486 abstain=0.0844
+Reasoning 0.5B Exp1: mrpc full fine-tuning
+Done: cola_reliability/results/exp1_reasoning_0p5b_ft_vs_lora/mrpc_ft
+ID f1=0.8953 ECE=0.1448 abstain=0.0172
+Reasoning 0.5B Exp1: mrpc LoRA
+Done: cola_reliability/results/exp1_reasoning_0p5b_ft_vs_lora/mrpc_lora_r4_attention
+ID f1=0.8993 ECE=0.1248 abstain=0.0515
+Reasoning 0.5B Exp1: rte full fine-tuning
+Done: cola_reliability/results/exp1_reasoning_0p5b_ft_vs_lora/rte_ft
+ID accuracy=0.7762 ECE=0.2123 abstain=0.0253
+Reasoning 0.5B Exp1: rte LoRA
+Done: cola_reliability/results/exp1_reasoning_0p5b_ft_vs_lora/rte_lora_r4_attention
+ID accuracy=0.7545 ECE=0.1839 abstain=0.1408
+Reasoning 0.5B Exp1: sst2 full fine-tuning

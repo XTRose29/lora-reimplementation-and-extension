@@ -1,0 +1,11 @@
+{
+  "accuracy": 0.8034515819750719,
+  "eval_loss": 0.4667884680357846,
+  "matthews_correlation": 0.5099888407051765,
+  "method": "bitfit",
+  "model_name": "roberta-base",
+  "primary_metric": "matthews_correlation",
+  "primary_metric_value": 0.5099888407051765,
+  "split": "validation",
+  "task_name": "cola"
+}

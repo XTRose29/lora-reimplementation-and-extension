@@ -1,0 +1,43 @@
+{
+  "abstention_threshold": 0.8,
+  "attention_targets": [
+    "query",
+    "value"
+  ],
+  "batch_size": 16,
+  "calibration_bins": 15,
+  "device": "cuda",
+  "epochs": 5,
+  "gradient_accumulation_steps": 1,
+  "layer_indices": "all",
+  "learning_rate": null,
+  "lora_alpha": 32.0,
+  "lora_dropout": 0.1,
+  "lora_placement": "attention",
+  "lora_r": 4,
+  "max_eval_samples": null,
+  "max_length": 128,
+  "max_ood_samples": 1000,
+  "max_train_samples": null,
+  "method": "ft",
+  "model_name": "roberta-base",
+  "ood_has_compatible_labels": false,
+  "ood_split": "validation",
+  "ood_task": "none",
+  "output_dir": "cola_reliability/results/exp1_ft_vs_lora/cola_ft",
+  "parameter_count": {
+    "frozen_parameters": 0,
+    "total_parameters": 124647170,
+    "trainable_parameters": 124647170,
+    "trainable_ratio": 1.0
+  },
+  "primary_metric": "matthews_correlation",
+  "replaced_modules": [],
+  "resolved_learning_rate": 2e-05,
+  "seed": 42,
+  "selected_layers": "all",
+  "task_name": "cola",
+  "validation_split": "validation",
+  "warmup_ratio": 0.06,
+  "weight_decay": 0.0
+}

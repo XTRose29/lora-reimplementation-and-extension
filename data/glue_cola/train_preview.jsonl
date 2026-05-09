@@ -1,0 +1,20 @@
+{"idx": 0, "split": "train", "label": 1, "label_name": "acceptable", "sentence": "Our friends won't buy this analysis, let alone the next one we propose."}
+{"idx": 1, "split": "train", "label": 1, "label_name": "acceptable", "sentence": "One more pseudo generalization and I'm giving up."}
+{"idx": 2, "split": "train", "label": 1, "label_name": "acceptable", "sentence": "One more pseudo generalization or I'm giving up."}
+{"idx": 3, "split": "train", "label": 1, "label_name": "acceptable", "sentence": "The more we study verbs, the crazier they get."}
+{"idx": 4, "split": "train", "label": 1, "label_name": "acceptable", "sentence": "Day by day the facts are getting murkier."}
+{"idx": 5, "split": "train", "label": 1, "label_name": "acceptable", "sentence": "I'll fix you a drink."}
+{"idx": 6, "split": "train", "label": 1, "label_name": "acceptable", "sentence": "Fred watered the plants flat."}
+{"idx": 7, "split": "train", "label": 1, "label_name": "acceptable", "sentence": "Bill coughed his way out of the restaurant."}
+{"idx": 8, "split": "train", "label": 1, "label_name": "acceptable", "sentence": "We're dancing the night away."}
+{"idx": 9, "split": "train", "label": 1, "label_name": "acceptable", "sentence": "Herman hammered the metal flat."}
+{"idx": 10, "split": "train", "label": 1, "label_name": "acceptable", "sentence": "The critics laughed the play off the stage."}
+{"idx": 11, "split": "train", "label": 1, "label_name": "acceptable", "sentence": "The pond froze solid."}
+{"idx": 12, "split": "train", "label": 1, "label_name": "acceptable", "sentence": "Bill rolled out of the room."}
+{"idx": 13, "split": "train", "label": 1, "label_name": "acceptable", "sentence": "The gardener watered the flowers flat."}
+{"idx": 14, "split": "train", "label": 1, "label_name": "acceptable", "sentence": "The gardener watered the flowers."}
+{"idx": 15, "split": "train", "label": 1, "label_name": "acceptable", "sentence": "Bill broke the bathtub into pieces."}
+{"idx": 16, "split": "train", "label": 1, "label_name": "acceptable", "sentence": "Bill broke the bathtub."}
+{"idx": 17, "split": "train", "label": 1, "label_name": "acceptable", "sentence": "They drank the pub dry."}
+{"idx": 18, "split": "train", "label": 0, "label_name": "unacceptable", "sentence": "They drank the pub."}
+{"idx": 19, "split": "train", "label": 1, "label_name": "acceptable", "sentence": "The professor talked us into a stupor."}

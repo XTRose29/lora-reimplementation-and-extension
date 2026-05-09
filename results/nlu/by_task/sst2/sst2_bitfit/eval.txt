@@ -1,0 +1,8 @@
+accuracy: 0.9357798165137615
+primary_metric: accuracy
+primary_metric_value: 0.9357798165137615
+eval_loss: 0.21013818534889392
+task_name: sst2
+model_name: roberta-base
+method: bitfit
+split: validation

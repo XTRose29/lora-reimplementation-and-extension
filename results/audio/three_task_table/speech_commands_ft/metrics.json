@@ -1,0 +1,12 @@
+{
+  "accuracy": 0.9772590663193749,
+  "eval_loss": 0.09001404842871498,
+  "eval_samples": 9982,
+  "method": "ft",
+  "missing_keys": [],
+  "model_name": "facebook/wav2vec2-base",
+  "primary_metric": "accuracy",
+  "primary_metric_value": 0.9772590663193749,
+  "task_name": "speech_commands",
+  "unexpected_keys": []
+}

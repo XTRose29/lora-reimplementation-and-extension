@@ -1,0 +1,52 @@
+{
+  "audio_column_name": "audio",
+  "batch_size": 8,
+  "dataset_config": "en-US",
+  "dataset_name": "PolyAI/minds14",
+  "device": "cuda",
+  "epochs": 5,
+  "gradient_accumulation_steps": 1,
+  "label_column_name": "intent_class",
+  "label_names": [
+    "abroad",
+    "address",
+    "app_error",
+    "atm_limit",
+    "balance",
+    "business_loan",
+    "card_issues",
+    "cash_deposit",
+    "direct_debit",
+    "freeze",
+    "high_value_payment",
+    "joint_account",
+    "latest_transactions",
+    "pay_bill"
+  ],
+  "learning_rate": 1e-05,
+  "lora_alpha": 32.0,
+  "lora_dropout": 0.1,
+  "lora_r": 4,
+  "max_duration_seconds": 8.0,
+  "max_eval_samples": null,
+  "max_train_samples": null,
+  "method": "ft",
+  "model_name": "facebook/wav2vec2-base",
+  "output_dir": "my_Audio/results/three_task_table/minds14_en_ft",
+  "parameter_count": {
+    "frozen_parameters": 0,
+    "total_parameters": 94572174,
+    "trainable_parameters": 94572174,
+    "trainable_ratio": 1.0
+  },
+  "replaced_modules": [],
+  "seed": 42,
+  "split_strategy": "stratified_holdout",
+  "target_modules": [
+    "q_proj",
+    "v_proj"
+  ],
+  "task_name": "minds14_en",
+  "warmup_ratio": 0.06,
+  "weight_decay": 0.0
+}

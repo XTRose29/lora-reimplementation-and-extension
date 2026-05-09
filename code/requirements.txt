@@ -1,0 +1,18 @@
+# Core training and evaluation stack
+accelerate
+datasets
+evaluate
+matplotlib
+numpy
+pandas
+peft
+scikit-learn
+torch
+torchaudio
+torchvision
+tqdm
+transformers
+
+# Optional, depending on the local CUDA/PyTorch build and dataset features
+librosa
+soundfile

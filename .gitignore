@@ -216,3 +216,13 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Project experiment artifacts that are too large for GitHub
+**/checkpoint/
+**/__pycache__/
+*.pyc
+*.pt
+*.bin
+*.safetensors
+wandb/
+.DS_Store

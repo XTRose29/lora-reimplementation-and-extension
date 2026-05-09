@@ -1,0 +1,20 @@
+{"idx": 0, "split": "validation", "label": 1, "label_name": "acceptable", "sentence": "The sailors rode the breeze clear of the rocks."}
+{"idx": 1, "split": "validation", "label": 1, "label_name": "acceptable", "sentence": "The weights made the rope stretch over the pulley."}
+{"idx": 2, "split": "validation", "label": 1, "label_name": "acceptable", "sentence": "The mechanical doll wriggled itself loose."}
+{"idx": 3, "split": "validation", "label": 1, "label_name": "acceptable", "sentence": "If you had eaten more, you would want less."}
+{"idx": 4, "split": "validation", "label": 0, "label_name": "unacceptable", "sentence": "As you eat the most, you want the least."}
+{"idx": 5, "split": "validation", "label": 0, "label_name": "unacceptable", "sentence": "The more you would want, the less you would eat."}
+{"idx": 6, "split": "validation", "label": 0, "label_name": "unacceptable", "sentence": "I demand that the more John eat, the more he pays."}
+{"idx": 7, "split": "validation", "label": 1, "label_name": "acceptable", "sentence": "Mary listens to the Grateful Dead, she gets depressed."}
+{"idx": 8, "split": "validation", "label": 1, "label_name": "acceptable", "sentence": "The angrier Mary got, the more she looked at pictures."}
+{"idx": 9, "split": "validation", "label": 1, "label_name": "acceptable", "sentence": "The higher the stakes, the lower his expectations are."}
+{"idx": 10, "split": "validation", "label": 1, "label_name": "acceptable", "sentence": "The more Fred is obnoxious, the less attention you should pay to him."}
+{"idx": 11, "split": "validation", "label": 1, "label_name": "acceptable", "sentence": "John was lots more obnoxious than Fred."}
+{"idx": 12, "split": "validation", "label": 1, "label_name": "acceptable", "sentence": "The more people you give beer to, the more people get sick."}
+{"idx": 13, "split": "validation", "label": 0, "label_name": "unacceptable", "sentence": "The more does Bill smoke, the more Susan hates him."}
+{"idx": 14, "split": "validation", "label": 1, "label_name": "acceptable", "sentence": "The more pictures of him that appear in the news, the more embarrassed John becomes."}
+{"idx": 15, "split": "validation", "label": 1, "label_name": "acceptable", "sentence": "Every senator seems to become more corrupt, as he talks to more lobbyists."}
+{"idx": 16, "split": "validation", "label": 0, "label_name": "unacceptable", "sentence": "Who does John visit Sally because he likes?"}
+{"idx": 17, "split": "validation", "label": 1, "label_name": "acceptable", "sentence": "Marianne did not leave."}
+{"idx": 18, "split": "validation", "label": 1, "label_name": "acceptable", "sentence": "He could not] have been working."}
+{"idx": 19, "split": "validation", "label": 1, "label_name": "acceptable", "sentence": "He can not have been working."}

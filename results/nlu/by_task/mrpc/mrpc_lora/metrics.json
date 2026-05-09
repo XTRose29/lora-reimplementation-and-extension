@@ -1,0 +1,11 @@
+{
+  "accuracy": 0.8651960784313726,
+  "eval_loss": 0.37535379655086076,
+  "f1": 0.9036777583187391,
+  "method": "lora",
+  "model_name": "roberta-base",
+  "primary_metric": "f1",
+  "primary_metric_value": 0.9036777583187391,
+  "split": "validation",
+  "task_name": "mrpc"
+}

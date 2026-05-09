@@ -1,0 +1,13 @@
+{
+  "accuracy": 0.9924812030075187,
+  "dataset_name": "beans",
+  "eval_loss": 0.09325847526391347,
+  "eval_samples": 133,
+  "method": "ft",
+  "missing_keys": [],
+  "model_name": "google/vit-base-patch16-224-in21k",
+  "primary_metric": "accuracy",
+  "primary_metric_value": 0.9924812030075187,
+  "task_name": "beans",
+  "unexpected_keys": []
+}

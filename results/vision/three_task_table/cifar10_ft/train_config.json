@@ -1,0 +1,46 @@
+{
+  "batch_size": 16,
+  "dataset_name": "cifar10",
+  "device": "cuda",
+  "epochs": 3,
+  "eval_split": "test",
+  "gradient_accumulation_steps": 1,
+  "image_column_name": "img",
+  "label_names": [
+    "airplane",
+    "automobile",
+    "bird",
+    "cat",
+    "deer",
+    "dog",
+    "frog",
+    "horse",
+    "ship",
+    "truck"
+  ],
+  "learning_rate": 2e-05,
+  "lora_alpha": 32.0,
+  "lora_dropout": 0.1,
+  "lora_r": 4,
+  "max_eval_samples": null,
+  "max_train_samples": null,
+  "method": "ft",
+  "model_name": "google/vit-base-patch16-224-in21k",
+  "output_dir": "my_Vision/results/three_task_table/cifar10_ft",
+  "parameter_count": {
+    "frozen_parameters": 0,
+    "total_parameters": 85806346,
+    "trainable_parameters": 85806346,
+    "trainable_ratio": 1.0
+  },
+  "replaced_modules": [],
+  "seed": 42,
+  "target_modules": [
+    "query",
+    "value"
+  ],
+  "task_name": "cifar10",
+  "train_split": "train",
+  "warmup_ratio": 0.06,
+  "weight_decay": 0.0
+}

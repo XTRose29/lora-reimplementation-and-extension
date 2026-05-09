@@ -1,0 +1,10 @@
+{
+  "accuracy": 0.9392201834862385,
+  "eval_loss": 0.2189112553106887,
+  "method": "lora",
+  "model_name": "roberta-base",
+  "primary_metric": "accuracy",
+  "primary_metric_value": 0.9392201834862385,
+  "split": "validation",
+  "task_name": "sst2"
+}

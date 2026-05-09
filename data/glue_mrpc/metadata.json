@@ -1,0 +1,19 @@
+{
+  "export_full": false,
+  "exported_files": {
+    "test": "data/glue_mrpc/test_preview.jsonl",
+    "train": "data/glue_mrpc/train_preview.jsonl",
+    "validation": "data/glue_mrpc/validation_preview.jsonl"
+  },
+  "preview_samples": 20,
+  "splits": {
+    "test": 1725,
+    "train": 3668,
+    "validation": 408
+  },
+  "task_name": "mrpc",
+  "text_fields": [
+    "sentence1",
+    "sentence2"
+  ]
+}

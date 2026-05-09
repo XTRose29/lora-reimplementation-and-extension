@@ -1,0 +1,11 @@
+{
+  "accuracy": 0.8245445829338447,
+  "eval_loss": 0.4494648194222739,
+  "matthews_correlation": 0.5676609066599885,
+  "method": "adapter",
+  "model_name": "roberta-base",
+  "primary_metric": "matthews_correlation",
+  "primary_metric_value": 0.5676609066599885,
+  "split": "validation",
+  "task_name": "cola"
+}

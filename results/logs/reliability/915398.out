@@ -1,0 +1,28 @@
+Exp1: cola full fine-tuning
+Done: cola_reliability/results/exp1_ft_vs_lora/cola_ft
+ID matthews_correlation=0.6032 ECE=0.1476 abstain=0.0307
+Exp1: cola LoRA
+Done: cola_reliability/results/exp1_ft_vs_lora/cola_lora_r4_attention
+ID matthews_correlation=0.5780 ECE=0.0958 abstain=0.1457
+Exp1: mrpc full fine-tuning
+Done: cola_reliability/results/exp1_ft_vs_lora/mrpc_ft
+ID f1=0.9180 ECE=0.1062 abstain=0.0221
+Exp1: mrpc LoRA
+Done: cola_reliability/results/exp1_ft_vs_lora/mrpc_lora_r4_attention
+ID f1=0.8972 ECE=0.0601 abstain=0.1740
+Exp1: rte full fine-tuning
+Done: cola_reliability/results/exp1_ft_vs_lora/rte_ft
+ID accuracy=0.7762 ECE=0.1910 abstain=0.0361
+Exp1: rte LoRA
+Done: cola_reliability/results/exp1_ft_vs_lora/rte_lora_r4_attention
+ID accuracy=0.7076 ECE=0.1123 abstain=0.3646
+Exp1: sst2 full fine-tuning
+Done: cola_reliability/results/exp1_ft_vs_lora/sst2_ft
+ID accuracy=0.9392 ECE=0.0603 abstain=0.0057
+Exp1: sst2 LoRA
+Done: cola_reliability/results/exp1_ft_vs_lora/sst2_lora_r4_attention
+ID accuracy=0.9392 ECE=0.0489 abstain=0.0252
+Wrote cola_reliability/results/exp1_ft_vs_lora/summary_table.csv
+Wrote cola_reliability/results/exp1_ft_vs_lora/summary_table.md
+Done. Exp1 results written to cola_reliability/results/exp1_ft_vs_lora
+Table: cola_reliability/results/exp1_ft_vs_lora/summary_table.md

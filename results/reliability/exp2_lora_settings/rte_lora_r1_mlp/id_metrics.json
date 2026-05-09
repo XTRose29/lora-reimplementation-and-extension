@@ -1,0 +1,23 @@
+{
+  "abstained_error_rate": 0.4725274725274725,
+  "abstention_rate": 0.3285198555956679,
+  "abstention_threshold": 0.8,
+  "accuracy": 0.7003610108303249,
+  "best_accuracy": 0.7184115523465704,
+  "best_primary_metric": 0.7184115523465704,
+  "brier": 0.4184334736573165,
+  "calibration_accuracy": 0.8541790357146493,
+  "calibration_bins": 15,
+  "coverage": 0.6714801444043321,
+  "distribution": "id",
+  "ece": 0.1458209642853508,
+  "eval_loss": 0.6068219674958123,
+  "mce": 0.2721156952750531,
+  "mean_confidence": 0.8307457770635138,
+  "nll": 0.6185719603534929,
+  "primary_metric": "accuracy",
+  "primary_metric_value": 0.7003610108303249,
+  "selective_accuracy": 0.7849462365591398,
+  "selective_risk": 0.21505376344086025,
+  "split": "validation"
+}

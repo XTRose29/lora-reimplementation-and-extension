@@ -1,0 +1,42 @@
+{
+  "audio_column_name": "audio",
+  "batch_size": 8,
+  "dataset_config": "er",
+  "dataset_name": "s3prl/superb",
+  "device": "cuda",
+  "epochs": 5,
+  "gradient_accumulation_steps": 1,
+  "label_column_name": "label",
+  "label_names": [
+    "neu",
+    "hap",
+    "ang",
+    "sad"
+  ],
+  "learning_rate": 1e-05,
+  "lora_alpha": 32.0,
+  "lora_dropout": 0.1,
+  "lora_r": 4,
+  "max_duration_seconds": 8.0,
+  "max_eval_samples": null,
+  "max_train_samples": null,
+  "method": "ft",
+  "model_name": "facebook/wav2vec2-base",
+  "output_dir": "my_Audio/results/three_task_table/superb_er_ft",
+  "parameter_count": {
+    "frozen_parameters": 0,
+    "total_parameters": 94569604,
+    "trainable_parameters": 94569604,
+    "trainable_ratio": 1.0
+  },
+  "replaced_modules": [],
+  "seed": 42,
+  "split_strategy": "session_heldout",
+  "target_modules": [
+    "q_proj",
+    "v_proj"
+  ],
+  "task_name": "superb_er",
+  "warmup_ratio": 0.06,
+  "weight_decay": 0.0
+}

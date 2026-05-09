@@ -1,0 +1,5 @@
+{"accuracy": 0.6838235294117647, "epoch": 1, "eval_loss": 0.6017168175715667, "f1": 0.8122270742358079, "global_step": 230, "primary_metric": "f1", "primary_metric_value": 0.8122270742358079, "train_loss": 0.6427313194326733}
+{"accuracy": 0.7058823529411765, "epoch": 2, "eval_loss": 0.5247096419334412, "f1": 0.8159509202453988, "global_step": 460, "primary_metric": "f1", "primary_metric_value": 0.8159509202453988, "train_loss": 0.5801223728967749}
+{"accuracy": 0.7671568627450981, "epoch": 3, "eval_loss": 0.48147407059486097, "f1": 0.8470209339774558, "global_step": 690, "primary_metric": "f1", "primary_metric_value": 0.8470209339774558, "train_loss": 0.5217755790637887}
+{"accuracy": 0.7843137254901961, "epoch": 4, "eval_loss": 0.4514583693100856, "f1": 0.8547854785478548, "global_step": 920, "primary_metric": "f1", "primary_metric_value": 0.8547854785478548, "train_loss": 0.5011021392500918}
+{"accuracy": 0.7745098039215687, "epoch": 5, "eval_loss": 0.4604176575174698, "f1": 0.8516129032258065, "global_step": 1150, "primary_metric": "f1", "primary_metric_value": 0.8516129032258065, "train_loss": 0.48632035734860796}

@@ -1,0 +1,10 @@
+{
+  "accuracy": 0.6101083032490975,
+  "eval_loss": 0.6804513997501798,
+  "method": "bitfit",
+  "model_name": "roberta-base",
+  "primary_metric": "accuracy",
+  "primary_metric_value": 0.6101083032490975,
+  "split": "validation",
+  "task_name": "rte"
+}

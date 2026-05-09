@@ -1,0 +1,10 @@
+{
+  "accuracy": 0.776173285198556,
+  "eval_loss": 0.6539220876163907,
+  "method": "ft",
+  "model_name": "roberta-base",
+  "primary_metric": "accuracy",
+  "primary_metric_value": 0.776173285198556,
+  "split": "validation",
+  "task_name": "rte"
+}
