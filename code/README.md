@@ -9,7 +9,7 @@ This directory contains the re-implementation code used for the CS 4782 LoRA pro
 - `vision/`: ViT full fine-tuning and LoRA experiments for CIFAR-10, Beans, and Oxford-IIIT Pet.
 - `audio/`: wav2vec2 full fine-tuning and LoRA experiments for Minds14-EN, Speech Commands, and SUPERB ER.
 - `reliability/`: Calibration, ECE, Brier, NLL, and selective-accuracy experiments on GLUE tasks.
-- `nlg/`: Qwen2.5-0.5B-Instruct structured NLG generation experiments for E2E, WebNLG, and DART smoke tests.
+- `nlg/`: GPT-2 Medium E2E NLG reproduction code and Qwen2.5-0.5B-Instruct structured NLG confidence experiments.
 - `task_probed_lora/`: Extension code for task-probed LoRA placement experiments.
 - `newimpl/`: Compatibility package for task-probed LoRA imports.
 - `loralib/`: Local copy of the reference LoRA library files used for comparison/context.
@@ -37,7 +37,7 @@ python code/reimpl/train_my_lora_nlu.py --task_name sst2 --method lora --output_
 python code/vision/train_my_lora_vision.py --task_name cifar10 --method lora --output_dir results/vision/example_cifar10_lora
 python code/audio/train_my_lora_audio.py --task_name speech_commands --method lora --output_dir results/audio/example_speech_commands_lora
 python code/reliability/run_cola_reliability.py --task_name cola --method lora --output_dir results/reliability/example_cola_lora
-bash code/nlg/run_nlg_smoke_matrix.sh
+python code/nlg/run_qwen_nlg_generation.py --task e2e --method lora --prompt_variant strict --output_dir results/nlg/example_e2e_lora --max_train_examples 128 --max_eval_examples 64 --epochs 1
 ```
 
-Use the shell scripts in each subdirectory for the larger experiment batches reported in the project report.
+Use the README in each subdirectory for the larger experiment batches reported in the project report.

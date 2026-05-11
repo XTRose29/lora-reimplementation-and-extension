@@ -1,6 +1,6 @@
 # My NLU LoRA Reimplementation
 
-This folder is the shortest entry point for rerunning our NLU experiments. The actual implementation code lives in `../reimpl/`.
+This folder contains the shared NLU LoRA implementation used by the main NLU experiments. The NLG code also reuses `my_lora.py` for standard linear LoRA layers; GPT-2-specific `Conv1D` LoRA support lives in `../nlg/run_qwen_nlg_generation.py`.
 
 The original Microsoft LoRA repo is kept in `../lora/` only as reference code.
 

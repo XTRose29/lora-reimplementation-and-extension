@@ -30,8 +30,44 @@ from torch.optim import AdamW
 from torch.utils.data import DataLoader, Dataset as TorchDataset
 from tqdm.auto import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer, get_linear_schedule_with_warmup
+from transformers.pytorch_utils import Conv1D
 
 from reimpl.my_lora import MyLoRALinear, count_trainable_parameters
+
+
+class MyLoRAConv1D(nn.Module):
+    """LoRA wrapper for GPT-2's merged Conv1D attention projection."""
+
+    def __init__(self, base_layer: Conv1D, r: int = 4, lora_alpha: float = 32.0, lora_dropout: float = 0.0) -> None:
+        super().__init__()
+        if r <= 0:
+            raise ValueError("LoRA rank r must be positive")
+        self.base_layer = base_layer
+        self.in_features = int(base_layer.weight.shape[0])
+        self.out_features = int(base_layer.weight.shape[1])
+        self.r = int(r)
+        self.lora_alpha = float(lora_alpha)
+        self.scaling = self.lora_alpha / self.r
+        self.lora_dropout = nn.Dropout(p=float(lora_dropout)) if lora_dropout > 0 else nn.Identity()
+
+        device = base_layer.weight.device
+        dtype = base_layer.weight.dtype
+        self.lora_A = nn.Parameter(torch.empty(self.in_features, self.r, device=device, dtype=dtype))
+        self.lora_B = nn.Parameter(torch.empty(self.r, self.out_features, device=device, dtype=dtype))
+        self.reset_lora_parameters()
+
+        for param in self.base_layer.parameters():
+            param.requires_grad = False
+
+    def reset_lora_parameters(self) -> None:
+        nn.init.kaiming_uniform_(self.lora_A, a=math.sqrt(5))
+        nn.init.zeros_(self.lora_B)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        base_output = self.base_layer(x)
+        lora_hidden = torch.matmul(self.lora_dropout(x), self.lora_A)
+        lora_update = torch.matmul(lora_hidden, self.lora_B)
+        return base_output + self.scaling * lora_update
 
 
 def parse_args() -> argparse.Namespace:
@@ -370,10 +406,17 @@ def infer_attention_targets(model: nn.Module) -> Tuple[str, ...]:
         for module_name, module in model.named_modules()
         if isinstance(module, nn.Linear) and module_name
     }
+    conv1d_leaf_names = {
+        module_name.rsplit(".", 1)[-1]
+        for module_name, module in model.named_modules()
+        if isinstance(module, Conv1D) and module_name
+    }
     if {"q_proj", "v_proj"}.issubset(linear_leaf_names):
         return ("q_proj", "v_proj")
     if {"query", "value"}.issubset(linear_leaf_names):
         return ("query", "value")
+    if "c_attn" in conv1d_leaf_names:
+        return ("c_attn",)
     raise ValueError(f"Could not infer attention targets. Linear leaf names include: {sorted(linear_leaf_names)[:30]}")
 
 
@@ -394,7 +437,7 @@ def inject_lora(model: nn.Module, r: int, alpha: float, dropout: float) -> List[
     attention_targets = set(infer_attention_targets(model))
     replaced: List[str] = []
     for module_name, module in list(model.named_modules()):
-        if not isinstance(module, nn.Linear):
+        if not isinstance(module, (nn.Linear, Conv1D)):
             continue
         if transformer_layer_index(module_name) is None:
             continue
@@ -402,10 +445,14 @@ def inject_lora(model: nn.Module, r: int, alpha: float, dropout: float) -> List[
         if leaf not in attention_targets:
             continue
         parent, child_name = get_parent_module(model, module_name)
-        setattr(parent, child_name, MyLoRALinear.from_linear(module, r, alpha, dropout))
+        if isinstance(module, nn.Linear):
+            replacement = MyLoRALinear.from_linear(module, r, alpha, dropout)
+        else:
+            replacement = MyLoRAConv1D(module, r=r, lora_alpha=alpha, lora_dropout=dropout)
+        setattr(parent, child_name, replacement)
         replaced.append(module_name)
     if not replaced:
-        raise ValueError("No LoRA modules matched inferred Qwen attention targets.")
+        raise ValueError("No LoRA modules matched inferred attention targets.")
     return replaced
 
 
