@@ -1,18 +1,15 @@
-# Core training and evaluation stack
-accelerate
-datasets
-evaluate
-matplotlib
-numpy
-pandas
-peft
-scikit-learn
-torch
-torchaudio
-torchvision
-tqdm
-transformers
+# Core training stack
+torch>=2.1
+transformers>=4.38
+datasets>=2.18
+numpy>=1.24
+tqdm>=4.66
 
-# Optional, depending on the local CUDA/PyTorch build and dataset features
-librosa
-soundfile
+# Result aggregation and plotting
+pandas>=2.0
+matplotlib>=3.7
+
+# Audio experiments
+torchaudio>=2.1
+soundfile>=0.12
+librosa>=0.10

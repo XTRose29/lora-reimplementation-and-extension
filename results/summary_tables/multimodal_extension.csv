@@ -1,5 +1,0 @@
-Modality,Method,Params,Task 1,Task 2,Task 3
-Vision,FT,85.81M,0.9865,0.9925,0.9201
-Vision,LoRA,0.16M,0.9859,0.9925,0.9280
-Audio,FT,94.57M,0.0973,0.9773,0.6414
-Audio,LoRA,0.35M,0.1416,0.9643,0.5479

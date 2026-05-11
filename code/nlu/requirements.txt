@@ -1,7 +1,0 @@
-torch>=2.1
-transformers>=4.38
-datasets>=2.18
-numpy>=1.24
-tqdm>=4.66
-pandas>=2.0
-matplotlib>=3.7

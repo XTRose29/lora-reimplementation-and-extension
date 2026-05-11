@@ -1,38 +1,45 @@
-# LoRA Re-implementation and Extension
+# A New Look at the "Battle" between LoRA and Full Fine-Tuning
 
-**Authors:** Rose Tianruo Xu and Weijie Zhou  
-**Contribution statement:** Both authors contributed equally to this project.
+**Authors:** Tianruo Rose Xu and Weijie Zhou  
+**Course:** CS 4782 final project, Cornell University
 
 ## 1. Introduction
 
-This repository contains a CS 4782 final project re-implementing and extending **LoRA: Low-Rank Adaptation of Large Language Models**.
+This repository contains our re-implementation and extension project for **Hu et al. (2022), "LoRA: Low-Rank Adaptation of Large Language Models."** LoRA's main contribution is to adapt large pretrained models by freezing the backbone and training low-rank update matrices, greatly reducing trainable parameters.
 
-LoRA freezes pretrained weights and trains a low-rank update, `Delta W = (alpha / r) BA`, reducing trainable parameters while aiming to preserve full fine-tuning performance.
+Our goal is to test whether LoRA behaves like a parameter-efficient substitute for full fine-tuning (FT), or whether the low-rank constraint changes downstream performance and reliability.
 
 ## 2. Chosen Result
 
-We reproduce the LoRA paper's core NLU claim: LoRA on RoBERTa-base can match or approach full fine-tuning while training orders of magnitude fewer parameters.
+We aimed to reproduce the paper's central efficiency-performance claim: LoRA can match or exceed FT while updating far fewer parameters. The key original references are **Table 2** for RoBERTa on GLUE and **Table 3** for GPT-2 Medium/Large on E2E NLG.
 
-Our main reproduction corresponds to the original paper's full fine-tuning vs adapter vs LoRA comparison on GLUE-style NLU tasks. We then extend the comparison to vision, audio, reliability/calibration, and structured NLG generation.
+The LoRA update used throughout the project is:
+
+```text
+W = W0 + Delta W,     Delta W = (alpha / r) B A
+```
 
 ## 3. GitHub Contents
 
-- `code/`: NLU, vision, audio, reliability, task-probed LoRA, and NLG experiment code.
-- `data/`: Lightweight dataset previews plus instructions for obtaining full datasets.
-- `results/`: Metrics, logs, predictions, figures, and report-level summary tables.
-- `poster/`: Final in-class poster PDF.
-- `report/`: Final two-page project report PDF.
-- `LICENSE`: MIT license for this project repository.
+```text
+code/       training, evaluation, LoRA modules, and summarizers
+data/       lightweight GLUE previews and dataset download instructions
+results/    metrics, configs, logs, and predictions used in the final report
+report/     final project report PDF
+poster/     final poster PDF
+```
+
+The main implementation folders are `code/reimpl` for RoBERTa GLUE, `code/nlg` for GPT-2/Qwen generation, `code/vision` for ViT image classification, `code/audio` for wav2vec2 speech classification, and `code/reliability` for calibration metrics.
 
 ## 4. Re-implementation Details
 
-NLU experiments compare full fine-tuning, adapters, BitFit, and LoRA on SST-2, MRPC, RTE, and CoLA using RoBERTa-base-style sequence classification.
+We implemented FT, LoRA, adapters, and BitFit for RoBERTa-base on GLUE, then extended the FT-vs-LoRA comparison to GPT-2 Medium on E2E, ViT-base on vision tasks, wav2vec2-base on audio tasks, and Qwen2.5-0.5B-Instruct for confidence-aware NLG.
 
-Extensions evaluate ViT on vision tasks, wav2vec2 on audio tasks, GLUE reliability/calibration metrics, and Qwen2.5-0.5B-Instruct NLG generation on E2E/WebNLG with DART smoke tests.
+Datasets include SST-2, MRPC, RTE, CoLA, E2E, WebNLG, CIFAR-10, Beans, Oxford-IIIT Pet, Minds14-EN, Speech Commands, and SUPERB ER. Metrics include accuracy, F1, Matthews correlation, BLEU, ROUGE-L, fact recall, and expected calibration error (ECE).
 
 ## 5. Reproduction Steps
 
-Set up the environment from the repository root:
+Create an environment from the repository root:
 
 ```bash
 python -m venv .venv
@@ -41,46 +48,51 @@ pip install -r code/requirements.txt
 export PYTHONPATH="$PWD/code:$PYTHONPATH"
 ```
 
-Example runs:
+On Windows PowerShell:
 
-```bash
-python code/reimpl/train_my_lora_nlu.py --task_name sst2 --method lora --output_dir results/nlu/example_sst2_lora
-python code/vision/train_my_lora_vision.py --task_name cifar10 --method lora --output_dir results/vision/example_cifar10_lora
-python code/audio/train_my_lora_audio.py --task_name speech_commands --method lora --output_dir results/audio/example_speech_commands_lora
-python code/reliability/run_cola_reliability.py --task_name cola --method lora --output_dir results/reliability/example_cola_lora
-bash code/nlg/run_nlg_smoke_matrix.sh
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r code\requirements.txt
+$env:PYTHONPATH = "$PWD\code;$env:PYTHONPATH"
 ```
 
-A CUDA-capable GPU is recommended for full reproduction; CPU runs are suitable only for small smoke tests.
+Example smoke runs:
 
-## 6. Results/Insights
+```bash
+python code/reimpl/train_my_lora_nlu.py --task_name sst2 --method lora --output_dir results/nlu/example_sst2_lora --max_train_samples 128 --max_eval_samples 128 --epochs 1
+python code/vision/train_my_lora_vision.py --task_name cifar10 --method lora --output_dir results/vision/example_cifar10_lora --max_train_samples 128 --max_eval_samples 128 --epochs 1
+python code/audio/train_my_lora_audio.py --task_name speech_commands --method lora --output_dir results/audio/example_speech_commands_lora --max_train_samples 128 --max_eval_samples 128 --epochs 1
+python code/reliability/run_cola_reliability.py --task_name cola --method lora --output_dir results/reliability/example_cola_lora --max_train_samples 128 --max_eval_samples 128 --epochs 1
+python code/nlg/run_qwen_nlg_generation.py --task e2e --model_name gpt2-medium --method lora --prompt_variant strict --output_dir results/nlg/example_gpt2_e2e_lora --max_train_examples 128 --max_eval_examples 64 --epochs 1
+```
 
-On NLU, LoRA `r=4` trains 0.74M parameters versus 124.65M for full fine-tuning, while matching FT on SST-2 and CoLA and trailing more on RTE.
+Full reproduction needs a CUDA-capable GPU and enough disk space for Hugging Face model/dataset caches. CPU runs are useful only for small checks.
 
-Vision LoRA nearly matches FT across CIFAR-10, Beans, and Oxford-IIIT Pet, while audio LoRA is cheaper but weaker than FT across the wav2vec2 tasks.
+## 6. Results / Insights
 
-Reliability experiments show LoRA often lowers ECE and improves selective accuracy, suggesting a calibration benefit even when primary task score drops slightly.
+LoRA matched FT closely on several RoBERTa GLUE and ViT vision settings while using under 1M trainable parameters. Our GPT-2 E2E reproduction had lower absolute BLEU/ROUGE than the original paper, likely due to practical differences in data scale, training schedule, prompting, decoding, and post-processing.
 
-NLG experiments show a scale-dependent pattern: LoRA is more format-stable in small smoke tests, but full fine-tuning becomes stronger on E2E and WebNLG when trained on 5,000 examples.
+In extensions, LoRA transferred well to vision, audio results were task-dependent, and LoRA often had lower ECE than FT on GLUE reliability experiments. Detailed artifacts are stored under `results/`, and the polished comparison tables are in `report/4782_Final_Project_Report.pdf`.
 
 ## 7. Conclusion
 
-LoRA is often close to full fine-tuning at a tiny fraction of the trainable parameter count, but it is not simply full fine-tuning made cheaper.
+LoRA is highly parameter-efficient, but it is not simply "full fine-tuning with fewer parameters." Its strengths depend on task, modality, metric, and adaptation difficulty.
 
-The extensions show that low-rank adaptation works especially well for many NLU and vision settings, while audio and larger-scale generation expose cases where full fine-tuning's extra flexibility matters.
+The main lesson from the re-implementation is that matching the original paper requires careful control of preprocessing, training budget, decoding, and evaluation details; small practical differences can noticeably change NLG scores.
 
 ## 8. References
 
-- Edward J. Hu, Yelong Shen, Phillip Wallis, Zeyuan Allen-Zhu, Yuanzhi Li, Shean Wang, Lu Wang, and Weizhu Chen. **LoRA: Low-Rank Adaptation of Large Language Models**. ICLR 2022.
-- Alex Wang et al. **GLUE: A Multi-Task Benchmark and Analysis Platform for Natural Language Understanding**. ICLR 2019.
-- Alexey Dosovitskiy et al. **An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale**. ICLR 2021.
-- Alexei Baevski et al. **wav2vec 2.0: A Framework for Self-Supervised Learning of Speech Representations**. NeurIPS 2020.
-- Jekaterina Novikova et al. **The E2E Dataset: New Challenges for End-to-End Generation**. SIGDIAL 2017.
-- Claire Gardent et al. **Creating Training Corpora for NLG Micro-Planners**. ACL 2017.
+Hu, E. J., Shen, Y., Wallis, P., Allen-Zhu, Z., Li, Y., Wang, S., Wang, L., and Chen, W. (2022). **LoRA: Low-rank adaptation of large language models.** ICLR.
+
+Liu, Y. et al. (2019). **RoBERTa: A robustly optimized BERT pretraining approach.** arXiv:1907.11692.
+
+Radford, A. et al. (2019). **Language models are unsupervised multitask learners.** OpenAI technical report.
+
+Wolf, T. et al. (2020). **Transformers: State-of-the-art natural language processing.** EMNLP System Demonstrations.
+
+Guo, C., Pleiss, G., Sun, Y., and Weinberger, K. Q. (2017). **On calibration of modern neural networks.** ICML.
 
 ## 9. Acknowledgements
 
-This work was completed as a final project for CS 4782.
-
-We thank the course staff and project collaborators for feedback, guidance, and evaluation.
-
+This project was completed as a CS 4782 final project at Cornell University. We thank the course staff for the project structure and feedback, and the Hugging Face ecosystem for model and dataset tooling used throughout the experiments.

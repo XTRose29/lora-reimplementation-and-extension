@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH -J 4782_nlu
-#SBATCH -o /home/tx88/4782finalproject/my_NLU/logs/%j.out
-#SBATCH -e /home/tx88/4782finalproject/my_NLU/logs/%j.err
+#SBATCH -o logs/nlu/%j.out
+#SBATCH -e logs/nlu/%j.err
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=tx88@cornell.edu
 #
@@ -16,13 +16,13 @@ set -euo pipefail
 if [[ -n "${SLURM_SUBMIT_DIR:-}" ]]; then
   SCRIPT_DIR="$SLURM_SUBMIT_DIR"
 else
-  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 fi
 cd "$SCRIPT_DIR"
 
 export KMP_DUPLICATE_LIB_OK=TRUE
 
-mkdir -p "$SCRIPT_DIR/my_NLU/logs"
+mkdir -p "$SCRIPT_DIR/logs/nlu"
 
 TASK_NAME="sst2"
 MODEL_NAME="roberta-base"
@@ -34,10 +34,10 @@ RUN_ALL=0
 usage() {
   cat <<'EOF'
 Usage:
-  ./run_task.sh
-  ./run_task.sh --task-name sst2 [--quick] [--model-name roberta-base] [--results-root my_NLU/results/by_task]
-  ./run_task.sh --all [--quick] [--model-name roberta-base] [--results-root my_NLU/results/four_task_table]
-  CONDA_ENV=tx88 ./run_task.sh --task-name sst2
+  bash code/reimpl/run_task.sh
+  bash code/reimpl/run_task.sh --task-name sst2 [--quick] [--model-name roberta-base]
+  bash code/reimpl/run_task.sh --all [--quick] [--model-name roberta-base]
+  CONDA_ENV=tx88 bash code/reimpl/run_task.sh --task-name sst2
 
 Options:
   --task-name NAME    One of: sst2, mrpc, rte, cola. Default: sst2
@@ -95,7 +95,7 @@ fi
 
 if [[ $RUN_ALL -eq 1 ]]; then
   TASKS=(sst2 mrpc rte cola)
-  : "${RESULTS_ROOT:=my_NLU/results/four_task_table}"
+  : "${RESULTS_ROOT:=results/nlu}"
 else
   case "$TASK_NAME" in
     sst2|mrpc|rte|cola) ;;
@@ -106,7 +106,7 @@ else
       ;;
   esac
   TASKS=("$TASK_NAME")
-  : "${RESULTS_ROOT:=my_NLU/results/by_task/$TASK_NAME}"
+  : "${RESULTS_ROOT:=results/nlu/$TASK_NAME}"
 fi
 
 SAMPLE_ARGS=()
@@ -137,10 +137,15 @@ run_task_method() {
   local epochs="$4"
   shift 4
   local -a extra_args=("$@")
-  local output_dir="$RESULTS_ROOT/${task}_${method_name}"
+  local output_base="$RESULTS_ROOT"
+  if [[ $RUN_ALL -eq 1 ]]; then
+    output_base="$RESULTS_ROOT/$task"
+  fi
+  local output_dir="$output_base/${task}_${method_name}"
+  mkdir -p "$output_base"
 
   echo "Running ${method_label} on ${task}, output=${output_dir}"
-  "$python_cmd" reimpl/train_my_lora_nlu.py \
+  "$python_cmd" code/reimpl/train_my_lora_nlu.py \
     --task_name "$task" \
     --model_name "$MODEL_NAME" \
     --output_dir "$output_dir" \
@@ -150,7 +155,7 @@ run_task_method() {
     "${SAMPLE_ARGS[@]}"
 
   echo "Evaluating ${method_label} on ${task}"
-  "$python_cmd" reimpl/evaluate_my_lora_nlu.py \
+  "$python_cmd" code/reimpl/evaluate_my_lora_nlu.py \
     --checkpoint_dir "$output_dir/checkpoint" \
     --output_dir "$output_dir" \
     "${EVAL_ARGS[@]}"
@@ -158,7 +163,7 @@ run_task_method() {
 
 for task in "${TASKS[@]}"; do
   echo "Preparing GLUE task ${task}..."
-  "$python_cmd" reimpl/prepare_glue.py \
+  "$python_cmd" code/reimpl/prepare_glue.py \
     --task_name "$task" \
     --output_dir "data/glue_${task}" \
     --preview_samples 20
@@ -191,13 +196,14 @@ for task in "${TASKS[@]}"; do
 done
 
 if [[ $RUN_ALL -eq 1 ]]; then
-  "$python_cmd" reimpl/plot_results.py \
+  "$python_cmd" code/reimpl/plot_results.py \
     --results_root "$RESULTS_ROOT" \
+    --output_dir "$RESULTS_ROOT" \
     --paper_tasks "sst2,mrpc,cola,rte"
   echo "Done. Results written to $RESULTS_ROOT"
   echo "Main table: $RESULTS_ROOT/paper_style_4task_table.md"
 else
-  "$python_cmd" reimpl/plot_results.py \
+  "$python_cmd" code/reimpl/plot_results.py \
     --results_root "$RESULTS_ROOT" \
     --paper_tasks "$TASK_NAME" \
     --table_name "paper_style_${TASK_NAME}_table"

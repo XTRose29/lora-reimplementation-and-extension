@@ -1,5 +1,0 @@
-Source,Method,Trainable Params,BLEU,ROUGE-L
-Paper,GPT-2 M FT,354.92M,68.2,71.0
-Paper,GPT-2 M LoRA,0.35M,70.4,71.8
-Ours,GPT-2 M FT,354.82M,45.39,57.86
-Ours,GPT-2 M LoRA,0.39M,44.72,56.85

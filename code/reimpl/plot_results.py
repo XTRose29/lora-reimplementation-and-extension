@@ -12,7 +12,7 @@ import pandas as pd
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Summarize LoRA NLU experiment results.")
-    parser.add_argument("--results_root", default="my_NLU/results", help="Directory containing experiment subfolders.")
+    parser.add_argument("--results_root", default="results/nlu", help="Directory containing experiment subfolders.")
     parser.add_argument("--output_dir", default=None, help="Defaults to results_root.")
     parser.add_argument("--paper_tasks", default="sst2,mrpc,cola,rte", help="Comma-separated tasks for paper-style table.")
     parser.add_argument("--table_name", default="paper_style_4task_table", help="Base filename for paper-style table.")
@@ -28,7 +28,7 @@ def load_json(path: Path):
 
 def collect_rows(results_root: Path):
     rows = []
-    for metrics_path in sorted(results_root.glob("*/metrics.json")):
+    for metrics_path in sorted(results_root.rglob("metrics.json")):
         exp_dir = metrics_path.parent
         metrics = load_json(metrics_path)
         config = load_json(exp_dir / "train_config.json")

@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH -J 4782_vision
-#SBATCH -o /home/tx88/4782finalproject/my_Vision/logs/%j.out
-#SBATCH -e /home/tx88/4782finalproject/my_Vision/logs/%j.err
+#SBATCH -o logs/vision/%j.out
+#SBATCH -e logs/vision/%j.err
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=tx88@cornell.edu
 #
@@ -16,12 +16,12 @@ set -euo pipefail
 if [[ -n "${SLURM_SUBMIT_DIR:-}" ]]; then
   SCRIPT_DIR="$SLURM_SUBMIT_DIR"
 else
-  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 fi
 cd "$SCRIPT_DIR"
 
 export KMP_DUPLICATE_LIB_OK=TRUE
-mkdir -p "$SCRIPT_DIR/my_Vision/logs"
+mkdir -p "$SCRIPT_DIR/logs/vision"
 
 TASK_NAME="beans"
 MODEL_NAME="google/vit-base-patch16-224-in21k"
@@ -33,9 +33,9 @@ RUN_ALL=0
 usage() {
   cat <<'EOF'
 Usage:
-  ./my_Vision/run_vision_task.sh
-  ./my_Vision/run_vision_task.sh --task-name beans [--quick]
-  ./my_Vision/run_vision_task.sh --all [--quick]
+  bash code/vision/run_vision_task.sh
+  bash code/vision/run_vision_task.sh --task-name beans [--quick]
+  bash code/vision/run_vision_task.sh --all [--quick]
 
 Options:
   --task-name NAME    One of: cifar10, beans, oxford_iiit_pet. Default: beans
@@ -86,7 +86,7 @@ fi
 
 if [[ $RUN_ALL -eq 1 ]]; then
   TASKS=(cifar10 beans oxford_iiit_pet)
-  : "${RESULTS_ROOT:=my_Vision/results/three_task_table}"
+  : "${RESULTS_ROOT:=results/vision}"
 else
   case "$TASK_NAME" in
     cifar10|beans|oxford_iiit_pet) ;;
@@ -96,7 +96,7 @@ else
       ;;
   esac
   TASKS=("$TASK_NAME")
-  : "${RESULTS_ROOT:=my_Vision/results/by_task/$TASK_NAME}"
+  : "${RESULTS_ROOT:=results/vision}"
 fi
 
 SAMPLE_ARGS=()
@@ -121,7 +121,7 @@ run_one_method() {
   local epochs="$4"
   local output_dir="$RESULTS_ROOT/${task}_${method}"
 
-  "$python_cmd" my_Vision/train_my_lora_vision.py \
+  "$python_cmd" code/vision/train_my_lora_vision.py \
     --task_name "$task" \
     --model_name "$MODEL_NAME" \
     --method "$method" \
@@ -131,7 +131,7 @@ run_one_method() {
     --learning_rate "$lr" \
     "${SAMPLE_ARGS[@]}"
 
-  "$python_cmd" my_Vision/evaluate_my_lora_vision.py \
+  "$python_cmd" code/vision/evaluate_my_lora_vision.py \
     --checkpoint_dir "$output_dir/checkpoint" \
     --output_dir "$output_dir" \
     "${EVAL_ARGS[@]}"
@@ -151,7 +151,7 @@ for task in "${TASKS[@]}"; do
   run_one_method "$task" "ft" "2e-5" "$epochs"
 done
 
-"$python_cmd" my_Vision/summarize_vision_results.py \
+"$python_cmd" code/vision/summarize_vision_results.py \
   --results_root "$RESULTS_ROOT" \
   --table_name "summary_table"
 

@@ -1,3 +1,0 @@
-experiment,task_name,method,model_name,accuracy,eval_loss,trainable_parameters,# Trainable Parameters,trainable_ratio
-beans_ft,beans,ft,google/vit-base-patch16-224-in21k,0.9924812030075187,0.09325847526391347,85800963,85.80M,1.0
-beans_lora,beans,lora,google/vit-base-patch16-224-in21k,0.9924812030075187,0.03379752900865343,149763,0.15M,0.0017424753327923343

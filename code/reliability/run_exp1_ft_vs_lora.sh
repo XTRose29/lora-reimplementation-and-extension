@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH -J glue_exp1_ft_lora
-#SBATCH -o /home/tx88/4782finalproject/cola_reliability/logs/%j.out
-#SBATCH -e /home/tx88/4782finalproject/cola_reliability/logs/%j.err
+#SBATCH -o logs/reliability/%j.out
+#SBATCH -e logs/reliability/%j.err
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=tx88@cornell.edu
 #
@@ -17,7 +17,7 @@ if [[ -n "${SLURM_SUBMIT_DIR:-}" ]]; then
   REPO_ROOT="$SLURM_SUBMIT_DIR"
 else
   SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-  REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+  REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 fi
 cd "$REPO_ROOT"
 
@@ -25,7 +25,7 @@ export KMP_DUPLICATE_LIB_OK=TRUE
 
 CONDA_ENV="${CONDA_ENV:-deepseek_env}"
 MODEL_NAME="roberta-base"
-RESULTS_ROOT="cola_reliability/results/exp1_ft_vs_lora"
+RESULTS_ROOT="results/reliability"
 TASKS_CSV="cola,mrpc,rte,sst2"
 QUICK=0
 EPOCHS=5
@@ -44,15 +44,15 @@ LORA_PLACEMENT="attention"
 usage() {
   cat <<'EOF'
 Usage:
-  ./cola_reliability/run_exp1_ft_vs_lora.sh
-  ./cola_reliability/run_exp1_ft_vs_lora.sh --quick
-  sbatch cola_reliability/run_exp1_ft_vs_lora.sh
+  bash code/reliability/run_exp1_ft_vs_lora.sh
+  bash code/reliability/run_exp1_ft_vs_lora.sh --quick
+  sbatch code/reliability/run_exp1_ft_vs_lora.sh
 
 Options:
   --quick                  Run 1 epoch on 128 train/eval examples per task
   --tasks CSV              Default: cola,mrpc,rte,sst2
   --model-name NAME        Default: roberta-base
-  --results-root DIR       Default: cola_reliability/results/exp1_ft_vs_lora
+  --results-root DIR       Default: results/reliability
   --epochs N               Default: 5
   --batch-size N           Default: 16
   --max-train-samples N    Limit train examples per task
@@ -97,10 +97,10 @@ if [[ $QUICK -eq 1 ]]; then
   BATCH_SIZE=8
   TRAIN_SAMPLES=128
   EVAL_SAMPLES=128
-  RESULTS_ROOT="cola_reliability/results/quick_exp1_ft_vs_lora"
+  RESULTS_ROOT="results/reliability/quick"
 fi
 
-mkdir -p "$RESULTS_ROOT" "cola_reliability/logs"
+mkdir -p "$RESULTS_ROOT" "logs/reliability"
 
 if [[ -f "/home/tx88/miniconda3/etc/profile.d/conda.sh" ]]; then
   source /home/tx88/miniconda3/etc/profile.d/conda.sh
@@ -154,14 +154,14 @@ for task in "${TASKS[@]}"; do
   printf "| %s | lora | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s |\n" "$task" "$MODEL_NAME" "$EPOCHS" "$BATCH_SIZE" "$TRAIN_SAMPLES" "$EVAL_SAMPLES" "$LORA_R" "$LORA_ALPHA" "$LORA_DROPOUT" "$LORA_PLACEMENT" "$ABSTENTION_THRESHOLD" "$CALIBRATION_BINS" "$SEED" "$lora_dir" >> "$settings_md"
 
   echo "Exp1: ${task} full fine-tuning"
-  "$python_cmd" cola_reliability/run_cola_reliability.py \
+  "$python_cmd" code/reliability/run_cola_reliability.py \
     --task_name "$task" \
     --method ft \
     --output_dir "$ft_dir" \
     "${common_args[@]}"
 
   echo "Exp1: ${task} LoRA"
-  "$python_cmd" cola_reliability/run_cola_reliability.py \
+  "$python_cmd" code/reliability/run_cola_reliability.py \
     --task_name "$task" \
     --method lora \
     --output_dir "$lora_dir" \
@@ -172,7 +172,7 @@ for task in "${TASKS[@]}"; do
     "${common_args[@]}"
 done
 
-"$python_cmd" cola_reliability/summarize_results.py --results_root "$RESULTS_ROOT"
+"$python_cmd" code/reliability/summarize_results.py --results_root "$RESULTS_ROOT"
 
 echo "Done. Exp1 results written to $RESULTS_ROOT"
 echo "Table: $RESULTS_ROOT/summary_table.md"

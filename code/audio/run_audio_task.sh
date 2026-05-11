@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH -J 4782_audio
-#SBATCH -o /home/tx88/4782finalproject/my_Audio/logs/%j.out
-#SBATCH -e /home/tx88/4782finalproject/my_Audio/logs/%j.err
+#SBATCH -o logs/audio/%j.out
+#SBATCH -e logs/audio/%j.err
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=tx88@cornell.edu
 #
@@ -13,12 +13,15 @@
 
 set -euo pipefail
 
-REPO_ROOT="/home/tx88/4782finalproject"
-SCRIPT_DIR="$REPO_ROOT"
+if [[ -n "${SLURM_SUBMIT_DIR:-}" ]]; then
+  SCRIPT_DIR="$SLURM_SUBMIT_DIR"
+else
+  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+fi
 cd "$SCRIPT_DIR"
 
 export KMP_DUPLICATE_LIB_OK=TRUE
-mkdir -p "$SCRIPT_DIR/my_Audio/logs"
+mkdir -p "$SCRIPT_DIR/logs/audio"
 
 TASK_NAME="speech_commands"
 MODEL_NAME="facebook/wav2vec2-base"
@@ -30,9 +33,9 @@ RUN_ALL=0
 usage() {
   cat <<'EOF'
 Usage:
-  ./my_Audio/run_audio_task.sh
-  ./my_Audio/run_audio_task.sh --task-name speech_commands [--quick]
-  ./my_Audio/run_audio_task.sh --all [--quick]
+  bash code/audio/run_audio_task.sh
+  bash code/audio/run_audio_task.sh --task-name speech_commands [--quick]
+  bash code/audio/run_audio_task.sh --all [--quick]
 
 Options:
   --task-name NAME    One of: speech_commands, minds14_en, superb_er. Default: speech_commands
@@ -83,7 +86,7 @@ fi
 
 if [[ $RUN_ALL -eq 1 ]]; then
   TASKS=(speech_commands minds14_en superb_er)
-  : "${RESULTS_ROOT:=my_Audio/results/three_task_table}"
+  : "${RESULTS_ROOT:=results/audio}"
 else
   case "$TASK_NAME" in
     speech_commands|minds14_en|superb_er) ;;
@@ -93,7 +96,7 @@ else
       ;;
   esac
   TASKS=("$TASK_NAME")
-  : "${RESULTS_ROOT:=my_Audio/results/by_task/$TASK_NAME}"
+  : "${RESULTS_ROOT:=results/audio}"
 fi
 
 SAMPLE_ARGS=()
@@ -118,7 +121,7 @@ run_one_method() {
   local epochs="$4"
   local output_dir="$RESULTS_ROOT/${task}_${method}"
 
-  "$python_cmd" my_Audio/train_my_lora_audio.py \
+  "$python_cmd" code/audio/train_my_lora_audio.py \
     --task_name "$task" \
     --model_name "$MODEL_NAME" \
     --method "$method" \
@@ -128,7 +131,7 @@ run_one_method() {
     --learning_rate "$lr" \
     "${SAMPLE_ARGS[@]}"
 
-  "$python_cmd" my_Audio/evaluate_my_lora_audio.py \
+  "$python_cmd" code/audio/evaluate_my_lora_audio.py \
     --checkpoint_dir "$output_dir/checkpoint" \
     --output_dir "$output_dir" \
     "${EVAL_ARGS[@]}"
@@ -148,7 +151,7 @@ for task in "${TASKS[@]}"; do
   run_one_method "$task" "ft" "1e-5" "$epochs"
 done
 
-"$python_cmd" my_Audio/summarize_audio_results.py \
+"$python_cmd" code/audio/summarize_audio_results.py \
   --results_root "$RESULTS_ROOT" \
   --table_name "summary_table"
 

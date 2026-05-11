@@ -1,7 +1,0 @@
-experiment,task_name,method,model_name,accuracy,eval_loss,trainable_parameters,# Trainable Parameters,trainable_ratio
-minds14_en_ft,minds14_en,ft,facebook/wav2vec2-base,0.09734513274336283,2.626223675409953,94572174,94.57M,1.0
-minds14_en_lora,minds14_en,lora,facebook/wav2vec2-base,0.1415929203539823,2.575032043457031,347918,0.35M,0.00367313512521111
-speech_commands_ft,speech_commands,ft,facebook/wav2vec2-base,0.9772590663193749,0.09001404842871498,94577828,94.58M,1.0
-speech_commands_lora,speech_commands,lora,facebook/wav2vec2-base,0.9643358044480064,0.12554584064103508,353572,0.35M,0.0037326042749051035
-superb_er_ft,superb_er,ft,facebook/wav2vec2-base,0.6414182111200645,0.9421189014489452,94569604,94.57M,1.0
-superb_er_lora,superb_er,lora,facebook/wav2vec2-base,0.547945205479452,1.0651096559535616,345348,0.35M,0.003646101346473381

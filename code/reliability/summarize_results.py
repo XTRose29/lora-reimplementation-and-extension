@@ -108,7 +108,7 @@ def fmt(value):
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--results_root", default="cola_reliability/results")
+    parser.add_argument("--results_root", default="results/reliability")
     parser.add_argument("--include_tasks", default="", help="Comma-separated task names to keep")
     parser.add_argument("--exclude_tasks", default="", help="Comma-separated task names to drop")
     args = parser.parse_args()
