@@ -39,6 +39,8 @@ Datasets include SST-2, MRPC, RTE, CoLA, E2E, WebNLG, CIFAR-10, Beans, Oxford-II
 
 ## 5. Reproduction Steps
 
+**Compute notice.** Full reproduction needs a CUDA-capable GPU and enough disk space for Hugging Face model/dataset caches. We ran the full experiments on a single NVIDIA RTX A6000 GPU. GPT-2 Medium FT/LoRA NLG runs took roughly 0.5--2.5 hours per run, while RoBERTa-base NLU runs were usually shorter, roughly 0.5--2 hours per run. CPU runs are useful only for small checks or smoke tests.
+
 Create an environment from the repository root:
 
 ```bash
@@ -66,8 +68,6 @@ python code/audio/train_my_lora_audio.py --task_name speech_commands --method lo
 python code/reliability/run_cola_reliability.py --task_name cola --method lora --output_dir results/reliability/example_cola_lora --max_train_samples 128 --max_eval_samples 128 --epochs 1
 python code/nlg/run_qwen_nlg_generation.py --task e2e --model_name gpt2-medium --method lora --prompt_variant strict --output_dir results/nlg/example_gpt2_e2e_lora --max_train_examples 128 --max_eval_examples 64 --epochs 1
 ```
-
-Full reproduction needs a CUDA-capable GPU and enough disk space for Hugging Face model/dataset caches. CPU runs are useful only for small checks.
 
 ## 6. Results / Insights
 
